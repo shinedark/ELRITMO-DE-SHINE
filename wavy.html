@@ -1,1 +1,166 @@
-ghj
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shine Dark Audio Waves in Three.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: Arial; }
+        #container { width: 100vw; height: 80vh; }
+        .controls { position: absolute; top: 10px; left: 10px; z-index: 10; }
+        .slider { margin: 10px 0; }
+        button { padding: 8px 16px; margin: 5px; background: #333; color: #fff; border: 1px solid #666; cursor: pointer; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <div class="controls">
+        <h2>Shine Dark Wave Controls</h2>
+        <label>Tempo (75-303 BPM): <input type="range" id="tempoSlider" min="75" max="303" value="130" step="1"></label>
+        <span id="tempoValue">130 BPM</span>
+        <label>Note Type: 
+            <select id="noteType">
+                <option value="1/8th">1/8th Note</option>
+                <option value="1/4">1/4 Note</option>
+            </select>
+        </label>
+        <label>Wave Ratio (<3.3): <input type="range" id="ratioSlider" min="1.0" max="3.2" value="2.5" step="0.1"></label>
+        <span id="ratioValue">2.5</span>
+        <button id="toggleSine">Toggle Sine</button>
+        <button id="toggleSquare">Toggle Square</button>
+        <button id="toggleTriangle">Toggle Triangle</button>
+        <button id="toggleSawtooth">Toggle Sawtooth</button>
+        <button id="reset">Reset View</button>
+    </div>
+
+    <script>
+        // Based on ILOVETHREE demo - added audio waves, sliders for tempo/ratio, note bursts
+        class ShineDarkWaveDemo {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+                this.container.appendChild(this.renderer.domElement);
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.camera.position.z = 5;
+
+                this.tempo = 130;
+                this.noteType = '1/8th';
+                this.ratio = 2.5; // <3.3 for sync
+                this.time = 0;
+                this.audioContext = new AudioContext();
+
+                // Add waves
+                this.waves = {};
+                this.waveTypes = ['sine', 'square', 'triangle', 'sawtooth'];
+                this.waveTypes.forEach(type => {
+                    const geometry = new THREE.BufferGeometry();
+                    const material = new THREE.LineBasicMaterial({ color: Math.random() * 0xffffff });
+                    const line = new THREE.Line(geometry, material);
+                    this.scene.add(line);
+                    this.waves[type] = { line, visible: true };
+                    this.updateWave(type);
+                });
+
+                // Add particles from ILOVETHREE (simplified snow)
+                this.particles = new THREE.Points(
+                    new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(3000 * 3), 3)),
+                    new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 })
+                );
+                this.scene.add(this.particles);
+                this.particleVelocities = new Float32Array(3000 * 3);
+
+                this.initControls();
+                this.animate();
+            }
+
+            updateWave(type) {
+                if (!this.waves[type].visible) return;
+                const positions = new Float32Array(100 * 3);
+                for (let i = 0; i < 100; i++) {
+                    const x = (i / 99) * 10 - 5;
+                    let y;
+                    const phase = this.time * this.ratio; // Phasing with ratio <3.3
+                    switch (type) {
+                        case 'sine': y = Math.sin(x + phase); break;
+                        case 'square': y = Math.sign(Math.sin(x + phase)); break;
+                        case 'triangle': y = (2 / Math.PI) * Math.asin(Math.sin(x + phase)); break;
+                        case 'sawtooth': y = 2 * ((x + phase) % 2 - 1); break;
+                    }
+                    positions[i * 3] = x;
+                    positions[i * 3 + 1] = y * 2;
+                    positions[i * 3 + 2] = 0;
+                }
+                this.waves[type].line.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            }
+
+            animate() {
+                requestAnimationFrame(this.animate.bind(this));
+                const delta = 0.01 * (this.tempo / 60); // Tempo controls speed
+                this.time += delta;
+
+                // Note differences: Burst particles on wave peaks for 1/8th or 1/4 duration
+                const duration = (this.noteType === '1/8th' ? 0.125 : 0.25) * (60 / this.tempo);
+                if (this.time % duration < 0.01) {
+                    // Trigger burst
+                    const positions = this.particles.geometry.attributes.position.array;
+                    for (let i = 0; i < 3000; i++) {
+                        positions[i * 3] = Math.random() * 10 - 5;
+                        positions[i * 3 + 1] = Math.random() * 10 + 5;
+                        positions[i * 3 + 2] = Math.random() * 10 - 5;
+                        this.particleVelocities[i * 3 + 1] = -Math.random() * 0.5 - 0.1; // Fall down
+                    }
+                    this.particles.geometry.attributes.position.needsUpdate = true;
+                }
+
+                // Update particles
+                const positions = this.particles.geometry.attributes.position.array;
+                for (let i = 0; i < 3000; i++) {
+                    positions[i * 3 + 1] += this.particleVelocities[i * 3 + 1];
+                    if (positions[i * 3 + 1] < -5) positions[i * 3 + 1] = 5; // Reset
+                }
+                this.particles.geometry.attributes.position.needsUpdate = true;
+
+                // Update waves
+                this.waveTypes.forEach(type => this.updateWave(type));
+
+                this.controls.update();
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            initControls() {
+                const tempoSlider = document.getElementById('tempoSlider');
+                tempoSlider.addEventListener('input', (e) => {
+                    this.tempo = parseInt(e.target.value);
+                    document.getElementById('tempoValue').textContent = `${this.tempo} BPM`;
+                });
+
+                document.getElementById('noteType').addEventListener('change', (e) => this.noteType = e.target.value);
+
+                document.getElementById('ratioSlider').addEventListener('input', (e) => {
+                    this.ratio = parseFloat(e.target.value);
+                    document.getElementById('ratioValue').textContent = this.ratio.toFixed(1);
+                });
+
+                ['sine', 'square', 'triangle', 'sawtooth'].forEach(type => {
+                    document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`).addEventListener('click', () => {
+                        this.waves[type].visible = !this.waves[type].visible;
+                        this.waves[type].line.visible = this.waves[type].visible;
+                    });
+                });
+
+                document.getElementById('reset').addEventListener('click', () => this.camera.position.set(0, 0, 5));
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+                });
+            }
+        }
+
+        new ShineDarkWaveDemo('container');
+    </script>
+</body>
+</html>

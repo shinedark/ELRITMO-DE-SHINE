@@ -8,6 +8,11 @@
     <meta name="keywords" content="pi sequence, 3D visualization, audio waves, tempo sync, mathematics, SHINE DARK">
     <meta name="author" content="Camilo Pineda (Shine Dark)">
     
+    <!-- Force refresh and prevent caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="SHINE DARK - Pi Sequence Visualization">
     <meta property="og:description" content="Interactive Pi sequence visualization with 3D audio waves and live tempo synchronization">
@@ -94,6 +99,11 @@
     </div>
     
     <script>
+        // Ensure we're on the right page
+        if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+            window.location.href = '/';
+        }
+        
         // Show loading screen for 2 seconds, then load main content
         window.addEventListener('load', function() {
             setTimeout(function() {
@@ -108,6 +118,10 @@
                 '<h1 class="loading-title">SHINE DARK</h1>' +
                 '<p class="loading-text">Error loading visualization. Please refresh the page.</p>';
         });
+        
+        // Debug: Log current URL
+        console.log('Current URL:', window.location.href);
+        console.log('Current pathname:', window.location.pathname);
     </script>
 </body>
 </html>

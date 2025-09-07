@@ -1,0 +1,10 @@
+# Render redirects file
+# This ensures all routes serve the main index.html
+
+/*    /index.html   200
+
+# API routes (if needed in future)
+# /api/*    https://your-api.render.com/api/:splat    200
+
+# Force HTTPS
+http://elritmo-de-shine.onrender.com/*    https://elritmo-de-shine.onrender.com/:splat    301!

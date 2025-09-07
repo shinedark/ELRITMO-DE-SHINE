@@ -1,0 +1,50 @@
+{
+  "name": "elritmo-de-shine",
+  "version": "1.0.0",
+  "description": "SHINE DARK - Pi Sequence Visualization with 3D Audio Waves",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build process needed for static site'",
+    "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main"
+  },
+  "keywords": [
+    "pi-sequence",
+    "3d-visualization",
+    "audio-waves",
+    "tempo-sync",
+    "mathematics",
+    "threejs",
+    "chartjs",
+    "shine-dark"
+  ],
+  "author": {
+    "name": "Camilo Pineda",
+    "alias": "Shine Dark",
+    "url": "https://github.com/shinedark",
+    "email": "contact@shinedarkmusic.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shinedark/ELRITMO-DE-SHINE.git"
+  },
+  "homepage": "https://shinedark.github.io/ELRITMO-DE-SHINE/",
+  "bugs": {
+    "url": "https://github.com/shinedark/ELRITMO-DE-SHINE/issues"
+  },
+  "dependencies": {
+    "three": "^0.158.0",
+    "chart.js": "^4.4.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

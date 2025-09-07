@@ -9,6 +9,9 @@ mkdir -p public
 # Copy main files to public directory
 cp index.html public/
 cp visualization.html public/
+cp charts.html public/
+cp wavy-demo.html public/
+cp favicon.ico public/
 
 # Copy source assets
 cp -r src public/

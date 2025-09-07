@@ -8,7 +8,7 @@
     "dev": "python -m http.server 8000",
     "build": "echo 'No build process needed for static site'",
     "deploy": "git add . && git commit -m 'Deploy updates' && git push origin main",
-    "render-build": "echo 'Static site - no build required'",
+    "render-build": "./build.sh",
     "render-start": "echo 'Static site deployed successfully'"
   },
   "keywords": [

@@ -278,57 +278,14 @@
 
         // Initialize controls
         function initControls() {
-            const tempoSlider = document.getElementById('tempoSlider');
-            if (tempoSlider) {
-                tempoSlider.addEventListener('input', (e) => {
-                    const tempo = parseInt(e.target.value);
-                    document.getElementById('tempoValue').textContent = `${tempo} BPM`;
-                    if (waveDemo) {
-                        waveDemo.tempo = tempo;
-                    }
-                });
-            }
-
-            const noteTypeSelect = document.getElementById('noteType');
-            if (noteTypeSelect) {
-                noteTypeSelect.addEventListener('change', (e) => {
-                    if (waveDemo) {
-                        waveDemo.noteType = e.target.value;
-                    }
-                });
-            }
-
-            const ratioSlider = document.getElementById('ratioSlider');
-            if (ratioSlider) {
-                ratioSlider.addEventListener('input', (e) => {
-                    const ratio = parseFloat(e.target.value);
-                    document.getElementById('ratioValue').textContent = ratio.toFixed(1);
-                    if (waveDemo) {
-                        waveDemo.ratio = ratio;
-                    }
-                });
-            }
-
-            // Wave toggles
-            ['sine', 'square', 'triangle', 'sawtooth'].forEach(type => {
-                const button = document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`);
-                if (button) {
-                    button.addEventListener('click', () => {
-                        if (waveDemo && waveDemo.waves[type]) {
-                            waveDemo.waves[type].visible = !waveDemo.waves[type].visible;
-                            waveDemo.waves[type].line.visible = waveDemo.waves[type].visible;
-                            button.classList.toggle('active', waveDemo.waves[type].visible);
-                        }
-                    });
-                }
-            });
-
             const resetBtn = document.getElementById('reset');
             if (resetBtn) {
                 resetBtn.addEventListener('click', () => {
                     if (waveDemo) {
                         waveDemo.camera.position.set(0, 0, 10);
-                        waveDemo.controls.reset();
+                        waveDemo.camera.lookAt(0, 0, 0);
+                        waveDemo.controls.target.set(0, 0, 0);
+                        waveDemo.controls.update();
                     }
                 });
             }
@@ -349,7 +306,17 @@
                 this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
                 this.container.appendChild(this.renderer.domElement);
                 this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-                this.camera.position.z = 5;
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+                this.controls.enableZoom = true;
+                this.controls.enablePan = true;
+                this.controls.enableRotate = true;
+                this.controls.minDistance = 1;
+                this.controls.maxDistance = 50;
+                this.controls.target.set(0, 0, 0);
+                this.camera.position.set(0, 0, 10);
+                this.camera.lookAt(0, 0, 0);
+                console.log('OrbitControls initialized:', this.controls);
 
                 this.tempo = 130;
                 this.noteType = '1/8th';
@@ -530,12 +497,27 @@
                     document.getElementById('ratioValue').textContent = this.ratio.toFixed(1);
                 });
                 ['sine', 'square', 'triangle', 'sawtooth'].forEach(type => {
-                    document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`).addEventListener('click', () => {
-                        this.waves[type].visible = !this.waves[type].visible;
-                        this.waves[type].line.visible = this.waves[type].visible;
-                    });
+                    const button = document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                    if (button) {
+                        console.log(`Setting up ${type} button`);
+                        button.addEventListener('click', () => {
+                            console.log(`Toggling ${type} wave`);
+                            this.waves[type].visible = !this.waves[type].visible;
+                            this.waves[type].line.visible = this.waves[type].visible;
+                            button.classList.toggle('active', this.waves[type].visible);
+                        });
+                        // Set initial active state
+                        button.classList.toggle('active', this.waves[type].visible);
+                    } else {
+                        console.log(`Button not found: toggle${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                    }
                 });
-                document.getElementById('reset').addEventListener('click', () => this.camera.position.z = 5);
+                document.getElementById('reset').addEventListener('click', () => {
+                    this.camera.position.set(0, 0, 10);
+                    this.camera.lookAt(0, 0, 0);
+                    this.controls.target.set(0, 0, 0);
+                    this.controls.update();
+                });
                 window.addEventListener('resize', () => {
                     this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
                     this.camera.updateProjectionMatrix();
@@ -544,7 +526,6 @@
             }
         }
 
-        new ShineDarkWaveDemo('container');
     </script>
 </body>
 </html>

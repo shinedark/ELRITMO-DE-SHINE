@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SHINE DARK - Pi Sequence Charts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #4ECDC4;
+        }
+        
+        .main-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0;
+            color: #fff;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .back-link:hover {
+            background: #fff;
+            color: #000;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 20px 20px;
+        }
+        
+        .section {
+            margin: 40px 0;
+            padding: 30px;
+            background: #111;
+            border-radius: 15px;
+            border: 1px solid #333;
+        }
+        
+        .section h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            background: #111;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #444;
+        }
+        
+        .repo-links {
+            text-align: center;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .repo-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .repo-link:hover {
+            background: #fff;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="main-title">SHINE DARK - Pi Sequence Charts</h1>
+    </div>
+    
+    <a href="visualization.html" class="back-link">← Back to Main</a>
+    
+    <div class="container">
+        <div class="repo-links">
+            <a href="https://github.com/shinedark/SD-ALGO" target="_blank" class="repo-link">SD-ALGO Repository</a>
+            <a href="https://github.com/shinedark/anti-gravity-sep-6-2025-" target="_blank" class="repo-link">Anti-Gravity Repository</a>
+            <a href="wavy-demo.html" class="repo-link">Wavy Demo</a>
+        </div>
+        
+        <div class="section">
+            <h2>📊 Natural Calculation: Fractional Digits with Sine Threshold</h2>
+            <div class="chart-container">
+                <canvas id="naturalChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎵 Music Notes: π-based Sequence with Sine Threshold</h2>
+            <div class="chart-container">
+                <canvas id="musicChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Natural Calculation Data
+        const steps = Array.from({ length: 16 }, (_, i) => i + 1);
+        const naturalDigits = [0, 3, 0, 3, 0, 3, 8, 3, 0, 3, 0, 3, 0, 3, 0, 3];
+        const naturalThreshold = steps.map(i => 4.5 + 4.5 * Math.sin(2 * Math.PI * 3 * (i - 1) / 15));
+
+        // Music Notes Data
+        const musicDigits = [1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4];
+        const musicThreshold = steps.map(i => 4 + 4 * Math.sin(2 * Math.PI * 3 * (i - 1) / 15));
+
+        // Initialize charts
+        function initCharts() {
+            // Natural Chart
+            const naturalCtx = document.getElementById('naturalChart').getContext('2d');
+            new Chart(naturalCtx, {
+                type: 'line',
+                data: {
+                    labels: steps,
+                    datasets: [{
+                        label: 'Fractional Digit',
+                        data: naturalDigits,
+                        borderColor: '#FF6B6B',
+                        backgroundColor: 'rgba(255, 107, 107, 0.2)',
+                        fill: true,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#FF6B6B',
+                        tension: 0.4,
+                        borderWidth: 4
+                    }, {
+                        label: 'Sine Threshold (Scale 1-9)',
+                        data: naturalThreshold,
+                        borderColor: '#4ECDC4',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        pointRadius: 0,
+                        borderDash: [5, 5],
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 9, 
+                            title: { display: true, text: 'Value' },
+                            grid: { color: '#333' },
+                            ticks: { color: '#fff' }
+                        },
+                        x: { 
+                            title: { display: true, text: 'Step' },
+                            grid: { color: '#333' },
+                            ticks: { color: '#fff' }
+                        }
+                    },
+                    plugins: {
+                        title: { 
+                            display: true, 
+                            text: 'Natural Calculation: π-based Sequence with Sine Threshold',
+                            color: '#fff',
+                            font: { size: 16 }
+                        },
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+
+            // Music Chart
+            const musicCtx = document.getElementById('musicChart').getContext('2d');
+            new Chart(musicCtx, {
+                type: 'line',
+                data: {
+                    labels: steps,
+                    datasets: [{
+                        label: 'Mapped Note (1-8)',
+                        data: musicDigits,
+                        borderColor: '#9966FF',
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        fill: true,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#9966FF',
+                        tension: 0.4,
+                        borderWidth: 4
+                    }, {
+                        label: 'Sine Threshold (Scale 1-8)',
+                        data: musicThreshold,
+                        borderColor: '#FF6384',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        pointRadius: 0,
+                        borderDash: [5, 5],
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 8, 
+                            title: { display: true, text: 'Value' },
+                            grid: { color: '#333' },
+                            ticks: { color: '#fff' }
+                        },
+                        x: { 
+                            title: { display: true, text: 'Step' },
+                            grid: { color: '#333' },
+                            ticks: { color: '#fff' }
+                        }
+                    },
+                    plugins: {
+                        title: { 
+                            display: true, 
+                            text: 'Music Notes: π-based Sequence with Sine Threshold',
+                            color: '#fff',
+                            font: { size: 16 }
+                        },
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initCharts);
+    </script>
+</body>
+</html>

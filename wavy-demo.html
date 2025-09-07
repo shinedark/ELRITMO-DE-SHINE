@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SHINE DARK - Pi Sequence with 3D Audio Waves</title>
+    <title>SHINE DARK - Wavy Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script>
@@ -24,101 +23,87 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #000;
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .main-title {
-            font-size: 4rem;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-            color: #fff;
-        }
-        
-        .repo-links {
-            text-align: center;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .repo-link {
-            color: #fff;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: 2px solid #fff;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .repo-link:hover {
-            background: #fff;
-            color: #000;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .section {
-            margin: 40px 0;
-            padding: 30px;
-            background: #111;
-            border-radius: 15px;
-            border: 1px solid #333;
-        }
-        
-        .section h2 {
-            color: #fff;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-        
-        .wave-container {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            margin: 20px 0;
-            background: #000;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 2px solid #ff0000;
+        body { 
+            margin: 0; 
+            background: #000; 
+            color: #fff; 
+            font-family: Arial; 
             overflow: hidden;
         }
         
-        #waveContainer, #wavyContainer {
-            width: 100%;
-            height: 100%;
-            background: #111;
-            border: 1px solid #00ff00;
-            position: relative;
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #4ECDC4;
         }
         
-        .controls {
+        .main-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0;
+            color: #fff;
+        }
+        
+        .back-link {
             position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .back-link:hover {
+            background: #fff;
+            color: #000;
+        }
+        
+        #container { 
+            width: 100vw; 
+            height: 100vh; 
+            margin-top: 100px;
+        }
+        
+        .controls { 
+            position: fixed; 
+            top: 120px; 
+            left: 20px; 
+            z-index: 1000; 
+            background: rgba(0,0,0,0.8); 
+            padding: 20px; 
+            border-radius: 10px; 
             border: 1px solid #333;
+        }
+        
+        .slider { margin: 10px 0; }
+        button { 
+            padding: 8px 16px; 
+            margin: 5px; 
+            background: #333; 
+            color: #fff; 
+            border: 1px solid #666; 
+            cursor: pointer; 
+            border-radius: 5px;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        button.active {
+            background: #4ECDC4;
+            color: #000;
         }
         
         .control-group {
@@ -146,91 +131,16 @@
             border: 1px solid #666;
             border-radius: 5px;
         }
-        
-        .control-group button {
-            padding: 8px 12px;
-            margin: 3px;
-            background: #444;
-            color: #fff;
-            border: 1px solid #666;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8em;
-            transition: all 0.3s;
-        }
-        
-        .control-group button:hover {
-            background: #555;
-            transform: translateY(-1px);
-        }
-        
-        .control-group button.active {
-            background: #667eea;
-            border-color: #667eea;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-        
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            margin: 20px 0;
-            background: #111;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid #444;
-        }
-        
-        .nav-buttons {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .nav-button {
-            background: #4ECDC4;
-            color: #000;
-            border: none;
-            padding: 15px 30px;
-            margin: 0 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-button:hover {
-            background: #fff;
-            transform: translateY(-2px);
-        }
-        
-        .nav-button.active {
-            background: #fff;
-            color: #000;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="main-title">SHINE DARK</h1>
-        <h2>3D Wave Visualization</h2>
-        
-        <div class="repo-links">
-            <a href="https://github.com/shinedark/SD-ALGO" target="_blank" class="repo-link">SD-ALGO Repository</a>
-            <a href="https://github.com/shinedark/anti-gravity-sep-6-2025-" target="_blank" class="repo-link">Anti-Gravity Repository</a>
-            <a href="charts.html" class="repo-link">Pi Sequence Charts</a>
-            <a href="wavy-demo.html" class="repo-link">Wavy Demo</a>
-        </div>
-        
-        <div class="section">
-            <h2>🌊 3D Wave Visualization</h2>
-            <div class="wave-container">
-                <div id="waveContainer"></div>
-            </div>
-        </div>
+    <div class="header">
+        <h1 class="main-title">SHINE DARK - Wavy Demo</h1>
     </div>
     
+    <a href="visualization.html" class="back-link">← Back to Main</a>
+    
+    <div id="container"></div>
     <div class="controls">
         <div class="control-group">
             <label>Tempo (75-303 BPM): <input type="range" id="tempoSlider" min="75" max="303" value="130" step="1"></label>
@@ -266,80 +176,7 @@
     </div>
 
     <script>
-        let waveDemo = null;
-
-        // Initialize wave demo
-        function initWaveDemo() {
-            const container = document.getElementById('waveContainer');
-            if (container) {
-                waveDemo = new ShineDarkWaveDemo('waveContainer');
-            }
-        }
-
-        // Initialize controls
-        function initControls() {
-            const tempoSlider = document.getElementById('tempoSlider');
-            if (tempoSlider) {
-                tempoSlider.addEventListener('input', (e) => {
-                    const tempo = parseInt(e.target.value);
-                    document.getElementById('tempoValue').textContent = `${tempo} BPM`;
-                    if (waveDemo) {
-                        waveDemo.tempo = tempo;
-                    }
-                });
-            }
-
-            const noteTypeSelect = document.getElementById('noteType');
-            if (noteTypeSelect) {
-                noteTypeSelect.addEventListener('change', (e) => {
-                    if (waveDemo) {
-                        waveDemo.noteType = e.target.value;
-                    }
-                });
-            }
-
-            const ratioSlider = document.getElementById('ratioSlider');
-            if (ratioSlider) {
-                ratioSlider.addEventListener('input', (e) => {
-                    const ratio = parseFloat(e.target.value);
-                    document.getElementById('ratioValue').textContent = ratio.toFixed(1);
-                    if (waveDemo) {
-                        waveDemo.ratio = ratio;
-                    }
-                });
-            }
-
-            // Wave toggles
-            ['sine', 'square', 'triangle', 'sawtooth'].forEach(type => {
-                const button = document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`);
-                if (button) {
-                    button.addEventListener('click', () => {
-                        if (waveDemo && waveDemo.waves[type]) {
-                            waveDemo.waves[type].visible = !waveDemo.waves[type].visible;
-                            waveDemo.waves[type].line.visible = waveDemo.waves[type].visible;
-                            button.classList.toggle('active', waveDemo.waves[type].visible);
-                        }
-                    });
-                }
-            });
-
-            const resetBtn = document.getElementById('reset');
-            if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                    if (waveDemo) {
-                        waveDemo.camera.position.set(0, 0, 10);
-                        waveDemo.controls.reset();
-                    }
-                });
-            }
-        }
-
-        // Initialize everything
-        document.addEventListener('DOMContentLoaded', function() {
-            initWaveDemo();
-            initControls();
-        });
-
+        // Based on ILOVETHREE demo - added audio waves, sliders for tempo/ratio, note bursts
         class ShineDarkWaveDemo {
             constructor(containerId) {
                 this.container = document.getElementById(containerId);
@@ -353,7 +190,7 @@
 
                 this.tempo = 130;
                 this.noteType = '1/8th';
-                this.ratio = 2.5;
+                this.ratio = 2.5; // <3.6 for sync
                 this.time = 0;
 
                 // Add 3D waves
@@ -372,24 +209,6 @@
                     this.waves[type] = { line, visible: true };
                     this.updateWave(type);
                 });
-
-                // Add lasers (solid color lines, light blue/green/orange/pink)
-                this.lasers = [];
-                for (let i = 0; i < 100; i++) {
-                    const geometry = new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array([0, 0, 0, 0, 5, 0]), 3));
-                    const material = new THREE.LineBasicMaterial({ 
-                        color: [0xadd8e6, 0x90ee90, 0xffd700, 0xffb6c1][i % 4], 
-                        linewidth: 4 
-                    });
-                    const laser = new THREE.Line(geometry, material);
-                    laser.position.x = (Math.random() - 0.5) * 10;
-                    laser.position.z = (Math.random() - 0.5) * 10;
-                    laser.visible = false;
-                    this.scene.add(laser);
-                    this.lasers.push(laser);
-                }
-                this.laserActive = 0;
-                this.laserLayer = 0;
 
                 // Add 3D marker for sync position
                 this.marker = new THREE.Group();
@@ -420,6 +239,19 @@
                 }
                 
                 this.scene.add(this.marker);
+
+                // Add particles
+                this.particles = new THREE.Points(
+                    new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(3000 * 3), 3)),
+                    new THREE.PointsMaterial({ 
+                        color: 0xffffff, 
+                        size: 0.1,
+                        transparent: true,
+                        opacity: 0.8
+                    })
+                );
+                this.scene.add(this.particles);
+                this.particleVelocities = new Float32Array(3000 * 3);
 
                 this.initControls();
                 this.animate();
@@ -461,10 +293,10 @@
 
             animate() {
                 requestAnimationFrame(this.animate.bind(this));
-                const delta = 0.01 * (this.tempo / 60);
+                const delta = 0.01 * (this.tempo / 60); // Tempo controls speed
                 this.time += delta;
 
-                // Update lasers: blast up on note peaks, dissipate in <5 steps/layer below ratio 3.3
+                // Blast particles UP when waves sync/peak
                 let duration;
                 switch (this.noteType) {
                     case '1/16th': duration = 0.0625; break; // 1/16 note
@@ -474,25 +306,52 @@
                     default: duration = 0.125; break;        // Default to 1/8 note
                 }
                 const noteDuration = duration * (60 / this.tempo);
-                if (this.time % noteDuration < 0.01) {
-                    this.laserActive = 100; // Activate lasers
-                    this.laserLayer = 0;
-                }
-                if (this.laserActive > 0) {
-                    this.lasers.forEach((laser, i) => {
-                        laser.visible = true;
-                        laser.position.y += 0.1 * this.ratio; // Rise with ratio <3.3
-                        laser.material.opacity = this.laserActive / 100; // Dissipate
-                        if (this.laserLayer < 5 && i % 20 === 0) { // Per layer <5 steps
-                            laser.scale.y = 1 - (this.laserLayer / 5);
-                        }
-                    });
-                    this.laserActive--;
-                    this.laserLayer = Math.min(5, this.laserLayer + 1);
-                } else {
-                    this.lasers.forEach(laser => laser.visible = false);
+                const syncThreshold = 0.02; // Smaller window for more precise sync
+                
+                if (this.time % noteDuration < syncThreshold) {
+                    const positions = this.particles.geometry.attributes.position.array;
+                    for (let i = 0; i < 3000; i++) {
+                        // Start particles at wave level (ground)
+                        positions[i * 3] = (Math.random() - 0.5) * 20; // X: -10 to +10
+                        positions[i * 3 + 1] = 0; // Start at ground level
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 20; // Z: -10 to +10
+                        
+                        // BLAST UP with high velocity
+                        this.particleVelocities[i * 3 + 1] = Math.random() * 2 + 1; // UP velocity: 1-3
+                        this.particleVelocities[i * 3] = (Math.random() - 0.5) * 0.5; // X spread
+                        this.particleVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.5; // Z spread
+                    }
+                    this.particles.geometry.attributes.position.needsUpdate = true;
                 }
 
+                // Update particles: blast up, then dissipate and fall
+                const positions = this.particles.geometry.attributes.position.array;
+                for (let i = 0; i < 3000; i++) {
+                    // Apply velocities
+                    positions[i * 3] += this.particleVelocities[i * 3]; // X drift
+                    positions[i * 3 + 1] += this.particleVelocities[i * 3 + 1]; // Y movement
+                    positions[i * 3 + 2] += this.particleVelocities[i * 3 + 2]; // Z drift
+                    
+                    // Apply gravity (dissipation rate)
+                    this.particleVelocities[i * 3 + 1] -= 0.02; // Gravity pulls down
+                    
+                    // Add air resistance (dissipation)
+                    this.particleVelocities[i * 3] *= 0.99; // X resistance
+                    this.particleVelocities[i * 3 + 2] *= 0.99; // Z resistance
+                    
+                    // Reset when particles fall below ground
+                    if (positions[i * 3 + 1] < -2) {
+                        positions[i * 3 + 1] = 0; // Reset to ground
+                        positions[i * 3] = (Math.random() - 0.5) * 20; // Random X
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 20; // Random Z
+                        this.particleVelocities[i * 3 + 1] = 0; // Stop vertical movement
+                        this.particleVelocities[i * 3] = 0; // Stop X movement
+                        this.particleVelocities[i * 3 + 2] = 0; // Stop Z movement
+                    }
+                }
+                this.particles.geometry.attributes.position.needsUpdate = true;
+
+                // Update waves
                 this.waveTypes.forEach(type => this.updateWave(type));
 
                 // Update 3D marker position and animation
@@ -509,7 +368,6 @@
                     this.marker.rotation.x += 0.01;
                     
                     // Pulse marker on sync
-                    const noteDuration = duration * (60 / this.tempo);
                     const syncProgress = (this.time % noteDuration) / noteDuration;
                     const pulseScale = 1 + Math.sin(syncProgress * Math.PI * 2) * 0.3;
                     this.marker.scale.setScalar(pulseScale);
@@ -520,22 +378,33 @@
             }
 
             initControls() {
-                document.getElementById('tempoSlider').addEventListener('input', (e) => {
+                const tempoSlider = document.getElementById('tempoSlider');
+                tempoSlider.addEventListener('input', (e) => {
                     this.tempo = parseInt(e.target.value);
                     document.getElementById('tempoValue').textContent = `${this.tempo} BPM`;
                 });
+
                 document.getElementById('noteType').addEventListener('change', (e) => this.noteType = e.target.value);
+
                 document.getElementById('ratioSlider').addEventListener('input', (e) => {
                     this.ratio = parseFloat(e.target.value);
                     document.getElementById('ratioValue').textContent = this.ratio.toFixed(1);
                 });
+
                 ['sine', 'square', 'triangle', 'sawtooth'].forEach(type => {
-                    document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`).addEventListener('click', () => {
+                    const button = document.getElementById(`toggle${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                    button.addEventListener('click', () => {
                         this.waves[type].visible = !this.waves[type].visible;
                         this.waves[type].line.visible = this.waves[type].visible;
+                        button.classList.toggle('active', this.waves[type].visible);
                     });
                 });
-                document.getElementById('reset').addEventListener('click', () => this.camera.position.z = 5);
+
+                document.getElementById('reset').addEventListener('click', () => {
+                    this.camera.position.set(0, 0, 10);
+                    this.controls.reset();
+                });
+                
                 window.addEventListener('resize', () => {
                     this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
                     this.camera.updateProjectionMatrix();

@@ -9,6 +9,7 @@ mkdir -p public
 # Copy main files to public directory
 cp index.html public/
 cp visualization.html public/
+cp eeg-analysis.html public/
 
 # Copy source assets
 cp -r src public/
